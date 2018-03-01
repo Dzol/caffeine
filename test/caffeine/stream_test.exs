@@ -26,6 +26,35 @@ defmodule Caffeine.StreamTest do
     assert length(l) === 5
   end
 
+  test "map/2 changes stream elements" do
+    ## given
+    defmodule Constant.E do
+      def stream do
+        [value() | rest()]
+      end
+
+      defp rest do
+        fn -> stream() end
+      end
+
+      def value do
+        2.71828
+      end
+    end
+
+    double = fn x ->
+      2 * x
+    end
+
+    ## when
+    s = Constant.E.stream()
+    d = Caffeine.Stream.map(s, double)
+    l = Caffeine.Stream.take(d, 5)
+    ## then
+    ## Curious behaviour for Enum.all? when []
+    assert Enum.all?(l, fn x -> 2 * Constant.E.value() === x end)
+  end
+
   test "reach the end" do
     ## given
     defmodule Constant.Bound.Pi do

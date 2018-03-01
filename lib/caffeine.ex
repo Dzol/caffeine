@@ -31,6 +31,16 @@ defmodule Caffeine do
       [head(x) | take(tail(x), n - 1)]
     end
 
+    def map([], _) do
+      []
+    end
+
+    def map(s, f) when is_list(s) and is_function(tl(s)) and is_function(f, 1) do
+      head = apply(f, [head(s)])
+      rest = fn -> map(tail(s), f) end
+      [head | rest]
+    end
+
     @spec head(t) :: term
     defp head(x) do
       hd(x)
