@@ -18,6 +18,6 @@ defmodule Caffeine.MixProject do
   end
 
   defp deps do
-    []
+    [{:stream_data, "~> 0.4"}]
   end
 end

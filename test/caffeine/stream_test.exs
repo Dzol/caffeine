@@ -1,28 +1,103 @@
 defmodule Caffeine.StreamTest do
   use ExUnit.Case
+  use ExUnitProperties
   doctest Caffeine.Stream
 
-  test "a constant stream of any term" do
+  test "pull elements out" do
     ## given
-    defmodule Constant do
-      def stream(x) do
-        [x | rest(x)]
+    defmodule Constant.Pi do
+      def stream do
+        [value() | rest()]
       end
 
-      defp rest(x) do
-        fn -> stream(x) end
+      defp rest do
+        fn -> stream() end
+      end
+
+      def value do
+        3.14159265359
       end
     end
 
     ## when
-    s = Constant.stream(3.14159265359)
+    s = Constant.Pi.stream()
     l = Caffeine.Stream.take(s, 5)
     ## then
     assert length(l) === 5
-    assert Enum.all?(l, &pi?/1)
   end
 
-  defp pi?(n) do
-    n === 3.14159265359
+  test "reach the end" do
+    ## given
+    defmodule Constant.Bound.Pi do
+      def stream(0) do
+        []
+      end
+
+      def stream(x) when is_integer(x) and x > 0 do
+        [value() | rest(x)]
+      end
+
+      defp rest(x) do
+        fn -> stream(x - 1) end
+      end
+
+      def value do
+        3.14159265359
+      end
+    end
+
+    ## when
+    s = Constant.Bound.Pi.stream(3)
+    l = Caffeine.Stream.take(s, 5)
+    ## then
+    assert length(l) === 3
+  end
+
+  defmodule Constant.Bound do
+    def stream(limit: 0, value: _) do
+      []
+    end
+
+    def stream(limit: b, value: v) do
+      [v | rest(b, v)]
+    end
+
+    defp rest(b, v) do
+      fn -> stream(limit: decrement(b), value: v) end
+    end
+
+    defp decrement(x) do
+      x - 1
+    end
+  end
+
+  property "take/2 no more than we ask" do
+    check all t <- term(),
+              b <- positive_integer(),
+              i <- positive_integer() do
+      ## when
+      s = Constant.Bound.stream(limit: b, value: t)
+      l = Caffeine.Stream.take(s, i)
+      ## then
+      assert length(l) <= i
+    end
+  end
+
+  property "take/2 values that we ask" do
+    check all t <- term(),
+              b <- positive_integer(),
+              i <- positive_integer() do
+      ## when
+      s = Constant.Bound.stream(limit: b, value: t)
+      l = Caffeine.Stream.take(s, i)
+      ## then
+      assert Enum.all?(l, value?(t))
+    end
+  end
+
+  defp value?(x) do
+    fn v ->
+      v == x
+    end
   end
 end
