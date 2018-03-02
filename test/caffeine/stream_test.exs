@@ -7,17 +7,14 @@ defmodule Caffeine.StreamTest do
     @moduledoc """
     A stream of constant values that stops once a limit is reached
     """
+    require Caffeine.Stream
 
     def stream(limit: 0, value: _) do
-      []
+      Caffeine.Stream.sentinel()
     end
 
     def stream(limit: l, value: v) when is_integer(l) and l > 0 do
-      [v | rest(l, v)]
-    end
-
-    defp rest(l, v) do
-      fn -> stream(limit: decrement(l), value: v) end
+      Caffeine.Stream.construct(v, stream(limit: decrement(l), value: v))
     end
 
     defp decrement(x) do
@@ -77,6 +74,41 @@ defmodule Caffeine.StreamTest do
       ## then
       assert Enum.all?(l, value?(t))
     end
+  end
+
+  property "head/1" do
+    ## given
+    check all t <- term() do
+      ## when
+      s = Caffeine.Stream.construct(t, Caffeine.Stream.sentinel())
+      ## then
+      assert Caffeine.Stream.head(s) === t
+    end
+  end
+
+  defp head do
+    term()
+  end
+
+  defp tail do
+    one_of(stream())
+  end
+
+  defp stream do
+    [constant(Caffeine.Stream.sentinel()), constant(Caffeine.Stream.construct(term(), tail()))]
+  end
+
+  property "tail/1" do
+    ## given
+    check all h <- head(),
+              t <- tail() do
+      ## when
+      s = Caffeine.Stream.construct(h, t)
+      ## then
+      assert Caffeine.Stream.tail(s) === t
+    end
+
+    flunk("The tail/0 generator is bad!")
   end
 
   defp pi do

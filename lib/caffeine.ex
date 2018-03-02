@@ -11,6 +11,20 @@ defmodule Caffeine do
     """
     @type t :: nonempty_improper_list(term, function) | []
 
+    def sentinel do
+      []
+    end
+
+    def sentinel?(x) do
+      x == []
+    end
+
+    defmacro construct(x, y) do
+      quote do
+        [unquote(x) | fn -> unquote(y) end]
+      end
+    end
+
     @doc """
     Extracts _n_ consecutive elements from the stream
 
@@ -32,7 +46,7 @@ defmodule Caffeine do
     @doc """
     A simple map
 
-    The output stream is the input stream w/ the function _f_ applied to the elements.
+    The output stream is the input stream w/ the function _f_ applied to each of the elements.
     """
     @spec map(t, (term -> term)) :: t
     def map([], _) do
