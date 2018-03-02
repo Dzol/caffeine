@@ -1,15 +1,13 @@
 defmodule Caffeine do
   defmodule Stream do
     @moduledoc """
-    An interface for the lazy embedding we use as a stream
+    ![Coffee Bean Boundary](./coffee.jpeg)
+
+    A stream library with an emphasis on simplicity
     """
 
     @typedoc """
-    The structure of the stream
-
-    Though it could be more of an ADT there are no `hold/1` and `release/1` macros with which to build a constructor (yet).
-    A plain old anonymous function and an `apply/2` suffice for the time being at least 🙂
-    The list `[]` acts as the sentinel for the stream too.
+    The stream data-structure
     """
     @type t :: nonempty_improper_list(term, function) | []
 
@@ -31,6 +29,12 @@ defmodule Caffeine do
       [head(x) | take(tail(x), n - 1)]
     end
 
+    @doc """
+    A simple map
+
+    The output stream is the input stream w/ the function _f_ applied to the elements.
+    """
+    @spec map(t, (term -> term)) :: t
     def map([], _) do
       []
     end

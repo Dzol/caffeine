@@ -1,0 +1,11 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/elixir:1.6
+    working_directory: ~/caffeine
+    steps:
+      - checkout
+      - run: mix local.hex --force
+      - run: mix deps.get
+      - run: mix test
