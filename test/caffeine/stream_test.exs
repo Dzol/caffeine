@@ -4,11 +4,15 @@ defmodule Caffeine.StreamTest do
   doctest Caffeine.Stream
 
   defmodule Constant.Bound do
+    @moduledoc """
+    A stream of constant values that stops once a limit is reached
+    """
+
     def stream(limit: 0, value: _) do
       []
     end
 
-    def stream(limit: l, value: v) do
+    def stream(limit: l, value: v) when is_integer(l) and l > 0 do
       [v | rest(l, v)]
     end
 
