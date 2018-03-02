@@ -3,12 +3,15 @@ defmodule Caffeine.MixProject do
 
   def project do
     [
+      name: "Caffeine",
       app: :caffeine,
       version: "0.1.0",
+      description: description(),
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      package: package()
     ]
   end
 
@@ -24,6 +27,21 @@ defmodule Caffeine.MixProject do
 
   defp aliases do
     [docs: ["docs", &picture/1]]
+  end
+
+  defp package do
+    [
+      licenses: ["GNU GPLv3"],
+      maintainers: ["Joseph Yiasemides"],
+      files: ["lib", "mix.exs", "README.md"],
+      links: %{"GitHub" => "https://github.com/Dzol/caffeine/"}
+    ]
+  end
+
+  defp description do
+    """
+    A stream library with an emphasis on simplicity
+    """
   end
 
   defp picture(_) do
