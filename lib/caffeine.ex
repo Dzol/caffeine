@@ -19,6 +19,7 @@ defmodule Caffeine do
       x == []
     end
 
+    ## Fix
     defmacro construct(x, y) do
       quote do
         [unquote(x) | fn -> unquote(y) end]
@@ -60,13 +61,18 @@ defmodule Caffeine do
     end
 
     @spec head(t) :: term
-    defp head(x) do
+    def head(x) do
       hd(x)
     end
 
+    defp release(x) do
+      x.()
+    end
+
     @spec tail(t) :: t
-    defp tail(x) do
+    def tail(x) do
       apply(tl(x), [])
+      release(tl(x))
     end
   end
 end

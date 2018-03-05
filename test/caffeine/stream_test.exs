@@ -86,29 +86,15 @@ defmodule Caffeine.StreamTest do
     end
   end
 
-  defp head do
-    term()
-  end
-
-  defp tail do
-    one_of(stream())
-  end
-
-  defp stream do
-    [constant(Caffeine.Stream.sentinel()), constant(Caffeine.Stream.construct(term(), tail()))]
-  end
-
   property "tail/1" do
     ## given
-    check all h <- head(),
-              t <- tail() do
+    check all h <- term(),
+              t <- term() do
       ## when
       s = Caffeine.Stream.construct(h, t)
       ## then
       assert Caffeine.Stream.tail(s) === t
     end
-
-    flunk("The tail/0 generator is bad!")
   end
 
   defp pi do
