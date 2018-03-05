@@ -11,10 +11,12 @@ defmodule Caffeine do
     """
     @type t :: nonempty_improper_list(term, function) | []
 
+    @spec sentinel() :: []
     def sentinel do
       []
     end
 
+    @spec sentinel?(t) :: boolean
     def sentinel?(x) do
       x == []
     end
@@ -65,13 +67,13 @@ defmodule Caffeine do
       hd(x)
     end
 
+    @spec release((() -> t)) :: t
     defp release(x) do
       x.()
     end
 
     @spec tail(t) :: t
     def tail(x) do
-      apply(tl(x), [])
       release(tl(x))
     end
   end
