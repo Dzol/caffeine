@@ -38,9 +38,9 @@ defmodule Caffeine do
     @doc """
     A stream whose head is the element _e_ and whose tail _s_ is the expression to generate successive elements
 
-    **Warning:** don't pass a variable through the _s_ argument.
+    **Warning:** don't evaluate the expression _s_ before passing it to construct/2 otherwise it's no longer lazy.
     """
-    @spec construct(term, t) :: t
+    @spec construct(term, Macro.t()) :: t
     defmacro construct(e, s) do
       quote do
         [unquote(e) | fn -> unquote(s) end]

@@ -3,6 +3,41 @@ defmodule Caffeine.StreamTest do
   use ExUnitProperties
   doctest Caffeine.Stream
 
+  defmodule Natural do
+    require Caffeine.Stream
+
+    def lazy do
+      lazy(0)
+    end
+
+    def eager do
+      eager(0)
+    end
+
+    defp lazy(n) do
+      Caffeine.Stream.construct(n, lazy(increment(n)))
+    end
+
+    defp eager(n) do
+      i = eager(increment(n))
+      Caffeine.Stream.construct(n, i)
+    end
+
+    defp increment(n) do
+      n + 1
+    end
+  end
+
+  test "expression inside construct/2 builds good stream" do
+    x = Natural.lazy()
+    assert Caffeine.Stream.head(x) === 0
+  end
+
+  test "expression outside construct/2 builds bad stream" do
+    t = Task.async(&Natural.eager/0)
+    assert Task.shutdown(t, 5000) == nil
+  end
+
   defmodule List do
     require Caffeine.Stream
 
@@ -31,24 +66,22 @@ defmodule Caffeine.StreamTest do
   end
 
   property "head/1 is argument #1 of construct/2" do
+    ## given
     check all e <- term(),
               l <- list_of(term()) do
-      ## given
-      r = List.stream(l)
       ## when
-      s = Caffeine.Stream.construct(e, r)
+      s = Caffeine.Stream.construct(e, List.stream(l))
       ## then
       assert Caffeine.Stream.head(s) == e
     end
   end
 
   property "tail/1 is argument #2 of construct/2" do
+    ## given
     check all e <- term(),
               l <- list_of(term()) do
-      ## given
-      r = List.stream(l)
       ## when
-      s = Caffeine.Stream.construct(e, r)
+      s = Caffeine.Stream.construct(e, List.stream(l))
       ## then
       assert Caffeine.Stream.tail(s) == List.stream(l)
     end
