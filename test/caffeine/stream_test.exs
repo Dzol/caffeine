@@ -38,8 +38,4 @@ defmodule Caffeine.StreamTest do
       assert Caffeine.Stream.tail(s) == List.stream(l)
     end
   end
-
-  defp identity(x) do
-    x
-  end
 end

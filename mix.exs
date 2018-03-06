@@ -14,7 +14,8 @@ defmodule Caffeine.MixProject do
       deps: deps(),
       aliases: aliases(),
       package: package(),
-      dialyzer: dialyzer()
+      dialyzer: dialyzer(),
+      test_coverage: [tool: ExCoveralls]
     ]
   end
 
@@ -25,7 +26,12 @@ defmodule Caffeine.MixProject do
   end
 
   defp deps do
-    [{:stream_data, "~> 0.4"}, {:dialyxir, "~> 0.5"}, {:ex_doc, "~> 0.18.3"}]
+    [
+      {:stream_data, "~> 0.4", only: [:test, :dev]},
+      {:dialyxir, "~> 0.5", only: [:test, :dev]},
+      {:ex_doc, "~> 0.18", only: [:test]},
+      {:excoveralls, "~> 0.8", only: [:test, :dev]}
+    ]
   end
 
   defp aliases do
