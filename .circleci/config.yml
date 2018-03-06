@@ -12,12 +12,4 @@ jobs:
       - run: env MIX_ENV=test mix compile
       - run: mix test
       - run: env MIX_ENV=test mix coveralls.circle
-      - restore_cache:
-          keys:
-            - dialyzer-PLT-{{ .Branch }}-{{ .Revision }}
-            - dialyzer-PLT-{{ .Branch }}-
-            - dialyzer-PLT-
-      - run: mix dialyzer
-      - save_cache:
-          key: dialyzer-PLT-{{ .Branch }}-{{ .Revision }}
-          paths: ".dialyzer"
+      # - run: mix dialyzer

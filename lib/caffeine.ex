@@ -21,7 +21,6 @@ defmodule Caffeine do
       x == []
     end
 
-    ## Fix
     defmacro construct(x, y) do
       quote do
         [unquote(x) | fn -> unquote(y) end]

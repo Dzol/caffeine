@@ -2,8 +2,6 @@ defmodule Caffeine.MixProject do
   use Mix.Project
 
   def project do
-    initialize()
-
     [
       name: "Caffeine",
       app: :caffeine,
@@ -14,7 +12,6 @@ defmodule Caffeine.MixProject do
       deps: deps(),
       aliases: aliases(),
       package: package(),
-      dialyzer: dialyzer(),
       test_coverage: [tool: ExCoveralls]
     ]
   end
@@ -51,16 +48,6 @@ defmodule Caffeine.MixProject do
     """
     A stream library with an emphasis on simplicity
     """
-  end
-
-  defp initialize do
-    unless ".dialyzer" in File.ls!() do
-      File.mkdir!(".dialyzer")
-    end
-  end
-
-  defp dialyzer do
-    [plt_core_path: ".dialyzer"]
   end
 
   defp picture(_) do
