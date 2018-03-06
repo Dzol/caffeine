@@ -11,5 +11,7 @@ defmodule CaffeineTest do
              tail: 1,
              take: 2
            ]
+
+    assert Caffeine.Stream.__info__(:macros) == [construct: 2]
   end
 end
