@@ -26,7 +26,7 @@ defmodule Caffeine.MixProject do
     [
       {:stream_data, "~> 0.4", only: [:test, :dev]},
       {:dialyxir, "~> 0.5", only: [:test, :dev]},
-      {:ex_doc, "~> 0.18", only: [:test]},
+      {:ex_doc, "~> 0.18", only: [:test, :dev]},
       {:excoveralls, "~> 0.8", only: [:test, :dev]}
     ]
   end

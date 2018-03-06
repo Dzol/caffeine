@@ -15,6 +15,21 @@ defmodule Caffeine.StreamTest do
     end
   end
 
+  property "sentinel?/1 true if sentinel/0 false if construct/2" do
+    assert Caffeine.Stream.sentinel?(Caffeine.Stream.sentinel()) == true
+
+    check all e <- term() do
+      x = Caffeine.Stream.construct(e, Caffeine.Stream.sentinel())
+      assert Caffeine.Stream.sentinel?(x) == false
+    end
+
+    check all t <- term(), t != Caffeine.Stream.sentinel() do
+      assert_raise FunctionClauseError, fn ->
+        Caffeine.Stream.sentinel?(t)
+      end
+    end
+  end
+
   property "head/1 is argument #1 of construct/2" do
     check all e <- term(),
               l <- list_of(term()) do

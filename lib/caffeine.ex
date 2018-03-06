@@ -7,23 +7,39 @@ defmodule Caffeine do
     """
 
     @typedoc """
-    The stream data-structure
+    The Caffeine.Stream data structure
     """
-    @type t :: nonempty_improper_list(term, function) | []
+    @opaque t :: nonempty_improper_list(term, (() -> t)) | []
 
+    @doc """
+    A special value whose presence signals the end of a stream
+    """
     @spec sentinel() :: []
     def sentinel do
       []
     end
 
+    @doc """
+    A predicate to test for the sentinel value
+    """
     @spec sentinel?(t) :: boolean
-    def sentinel?(x) do
-      x == []
+    def sentinel?([]) do
+      true
     end
 
-    defmacro construct(x, y) do
+    def sentinel?([_ | x]) when is_function(x, 0) do
+      false
+    end
+
+    @doc """
+    A stream whose head is the element _e_ and whose tail _s_ is the expression to generate successive elements
+
+    **Warning:** don't pass a variable through the _s_ argument.
+    """
+    @spec construct(term, t) :: t
+    defmacro construct(e, s) do
       quote do
-        [unquote(x) | fn -> unquote(y) end]
+        [unquote(e) | fn -> unquote(s) end]
       end
     end
 
@@ -61,19 +77,25 @@ defmodule Caffeine do
       [head | rest]
     end
 
+    @doc """
+    The first element, if any, of the stream
+    """
     @spec head(t) :: term
     def head(x) do
       hd(x)
     end
 
-    @spec release((() -> t)) :: t
-    defp release(x) do
-      x.()
-    end
-
+    @doc """
+    The stream, if any, succeeding the first element
+    """
     @spec tail(t) :: t
     def tail(x) do
       release(tl(x))
+    end
+
+    @spec release((() -> t)) :: t
+    defp release(x) do
+      x.()
     end
   end
 end
