@@ -1,9 +1,13 @@
 defmodule Caffeine do
+  @moduledoc """
+  ![Coffee Bean Boundary](./coffee.jpeg)
+
+  A stream library with an emphasis on simplicity
+  """
+
   defmodule Stream do
     @moduledoc """
-    ![Coffee Bean Boundary](./coffee.jpeg)
-
-    A stream library with an emphasis on simplicity
+    Find the API under this module
     """
 
     @typedoc """

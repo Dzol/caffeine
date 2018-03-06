@@ -10,6 +10,7 @@ defmodule Caffeine.MixProject do
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      docs: documentation(),
       aliases: aliases(),
       package: package(),
       test_coverage: [tool: ExCoveralls]
@@ -29,6 +30,10 @@ defmodule Caffeine.MixProject do
       {:ex_doc, "~> 0.18", only: [:test, :dev]},
       {:excoveralls, "~> 0.8", only: [:test, :dev]}
     ]
+  end
+
+  defp documentation do
+    [main: "Caffeine"]
   end
 
   defp aliases do
