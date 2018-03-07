@@ -8,6 +8,7 @@ defmodule Caffeine.MixProject do
       version: "0.1.0",
       description: description(),
       elixir: "~> 1.6",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: documentation(),
@@ -31,6 +32,10 @@ defmodule Caffeine.MixProject do
       {:excoveralls, "~> 0.8", only: [:test, :dev]}
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/ancillary.ex"]
+  defp elixirc_paths(:dev), do: ["lib"]
+  defp elixirc_paths(_), do: ["lib"]
 
   defp documentation do
     [main: "Caffeine"]
