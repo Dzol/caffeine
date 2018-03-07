@@ -72,13 +72,11 @@ defmodule Caffeine do
     """
     @spec map(t, (term -> term)) :: t
     def map([], _) do
-      []
+      Caffeine.Stream.sentinel()
     end
 
     def map(s, f) when is_list(s) and is_function(tl(s)) and is_function(f, 1) do
-      head = apply(f, [head(s)])
-      rest = fn -> map(tail(s), f) end
-      [head | rest]
+      construct(f.(head(s)), map(tail(s), f))
     end
 
     @doc """
