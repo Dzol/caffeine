@@ -80,12 +80,14 @@ defmodule Caffeine do
     The output stream is the input stream w/ the function _f_ applied to each of the elements.
     """
     @spec map(t, (term -> term)) :: t
-    def map([], _) do
-      Caffeine.Stream.sentinel()
-    end
+    def map(s, f) do
+      cond do
+        Caffeine.Stream.sentinel?(s) ->
+          Caffeine.Stream.sentinel()
 
-    def map(s, f) when is_list(s) and is_function(tl(s)) and is_function(f, 1) do
-      construct(f.(head(s)), map(tail(s), f))
+        Caffeine.Stream.construct?(s) ->
+          construct(f.(head(s)), map(tail(s), f))
+      end
     end
 
     @doc """
