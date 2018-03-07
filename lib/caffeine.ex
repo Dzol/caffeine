@@ -35,6 +35,15 @@ defmodule Caffeine do
       false
     end
 
+    @spec construct?(t) :: boolean
+    def construct?([_ | x]) when is_function(x, 0) do
+      true
+    end
+
+    def construct?([]) do
+      false
+    end
+
     @doc """
     A stream whose head is the element _e_ and whose tail _s_ is the expression to generate successive elements
 

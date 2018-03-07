@@ -4,6 +4,7 @@ defmodule CaffeineTest do
 
   test "API presence under Stream module" do
     assert Caffeine.Stream.__info__(:functions) == [
+             construct?: 1,
              head: 1,
              map: 2,
              sentinel: 0,
