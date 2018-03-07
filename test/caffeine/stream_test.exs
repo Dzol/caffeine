@@ -49,4 +49,19 @@ defmodule Caffeine.StreamTest do
       assert Caffeine.Stream.tail(s) == CaffeineTest.Ancillary.List.stream(l)
     end
   end
+
+  property "map/2 w/ the identity function produces a like stream" do
+    ## given
+    check all l <- list_of(term()) do
+      s = CaffeineTest.Ancillary.List.stream(l)
+      ## when
+      t = Caffeine.Stream.map(s, &identity/1)
+      ## then
+      assert Caffeine.Stream.take(t, length(l)) === l
+    end
+  end
+
+  defp identity(x) do
+    x
+  end
 end
