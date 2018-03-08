@@ -2,14 +2,15 @@ defmodule CaffeineTest.Ancillary.List do
   require Caffeine.Stream
 
   def stream([]) do
-    Caffeine.Stream.sentinel()
+    import Caffeine.Stream, only: [sentinel: 0]
+
+    sentinel()
   end
 
   def stream(l) when is_list(l) do
-    f = fn ->
-      stream(tl(l))
-    end
+    import Caffeine.Stream, only: [construct: 2]
 
-    Caffeine.Stream.construct(hd(l), f)
+    f = fn -> stream(tl(l)) end
+    construct(hd(l), f)
   end
 end
