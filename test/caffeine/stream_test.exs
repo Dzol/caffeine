@@ -51,7 +51,7 @@ defmodule Caffeine.StreamTest do
     end
   end
 
-  property "map/2 w/ the identity function produces a like stream" do
+  property "map/2 preserves order" do
     ## given
     check all l <- list_of(term()) do
       s = CaffeineTest.Ancillary.List.stream(l)
@@ -62,7 +62,22 @@ defmodule Caffeine.StreamTest do
     end
   end
 
+  property "map/2 applies function" do
+    ## given
+    check all l <- list_of(integer()) do
+      s = CaffeineTest.Ancillary.List.stream(l)
+      ## when
+      t = Caffeine.Stream.map(s, &double/1)
+      ## then
+      assert Caffeine.Stream.take(t, length(l)) === Enum.map(l, &double/1)
+    end
+  end
+
   defp identity(x) do
     x
+  end
+
+  defp double(x) do
+    2 * x
   end
 end
