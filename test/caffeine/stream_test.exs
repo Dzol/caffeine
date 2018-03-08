@@ -73,11 +73,49 @@ defmodule Caffeine.StreamTest do
     end
   end
 
+  property "all elements of filter/2 prescribe to the predicate" do
+    ## given
+    check all l <- list_of(integer()) do
+      s = CaffeineTest.Ancillary.List.stream(l)
+      ## when
+      t = Caffeine.Stream.filter(s, &even?/1)
+      ## then
+      assert Enum.all?(Caffeine.Stream.take(t, length(l)), &even?/1)
+    end
+  end
+
+  property "filter/2 cardinality is less than or equal to input" do
+    ## given
+    check all l <- list_of(integer()) do
+      s = CaffeineTest.Ancillary.List.stream(l)
+      ## when
+      t = Caffeine.Stream.filter(s, &even?/1)
+      ## then
+      assert length(listify(t)) <= length(l)
+    end
+  end
+
   defp identity(x) do
     x
   end
 
   defp double(x) do
     2 * x
+  end
+
+  defp even?(x) do
+    rem(x, 2) === 0
+  end
+
+  defp listify(s) do
+    import Caffeine.Stream
+
+    cond do
+      sentinel?(s) ->
+        []
+
+      construct?(s) ->
+        [head(s) | listify(tail(s))]
+    end
   end
 end

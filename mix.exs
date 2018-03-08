@@ -5,7 +5,7 @@ defmodule Caffeine.MixProject do
     [
       name: "Caffeine",
       app: :caffeine,
-      version: "1.0.1",
+      version: "1.1.0",
       description: description(),
       elixir: "~> 1.6",
       elixirc_paths: elixirc_paths(Mix.env()),

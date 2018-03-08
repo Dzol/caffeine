@@ -88,6 +88,22 @@ defmodule Caffeine do
     end
 
     @doc """
+    A stream whose elements prescribe to a given predicate
+    """
+    @spec filter(t, (term -> boolean)) :: t
+    def filter(s, p) do
+      # import Caffeine.Stream, only: [sentinel?: 1, construct?: 1, sentinel: 0, construct: 2]
+
+      cond do
+        sentinel?(s) ->
+          sentinel()
+
+        construct?(s) ->
+          _filter(s, p)
+      end
+    end
+
+    @doc """
     The head, if any, of the stream
     """
     @spec head(t) :: term
@@ -105,6 +121,15 @@ defmodule Caffeine do
 
     defp pair(h, r) do
       [h | r]
+    end
+
+    defp _filter(s, p) do
+      if p.(head(s)) do
+        g = fn -> filter(tail(s), p) end
+        construct(head(s), g)
+      else
+        filter(tail(s), p)
+      end
     end
   end
 end

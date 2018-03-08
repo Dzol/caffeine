@@ -6,6 +6,7 @@ defmodule CaffeineTest do
     assert Caffeine.Stream.__info__(:functions) == [
              construct: 2,
              construct?: 1,
+             filter: 2,
              head: 1,
              map: 2,
              sentinel: 0,
