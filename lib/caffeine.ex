@@ -75,15 +75,14 @@ defmodule Caffeine do
     """
     @spec map(t, (term -> term)) :: t
     def map(s, f) do
+      # import Caffeine.Stream, only: [sentinel?: 1, construct?: 1, sentinel: 0, construct: 2]
+
       cond do
-        Caffeine.Stream.sentinel?(s) ->
-          Caffeine.Stream.sentinel()
+        sentinel?(s) ->
+          sentinel()
 
-        Caffeine.Stream.construct?(s) ->
-          g = fn ->
-            map(tail(s), f)
-          end
-
+        construct?(s) ->
+          g = fn -> map(tail(s), f) end
           construct(f.(head(s)), g)
       end
     end
