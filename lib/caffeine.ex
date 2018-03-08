@@ -35,6 +35,9 @@ defmodule Caffeine do
       false
     end
 
+    @doc """
+    Predicate: is this a stream of at least one element?
+    """
     @spec construct?(t) :: boolean
     def construct?([_ | x]) when is_function(x, 0) do
       true
@@ -44,14 +47,15 @@ defmodule Caffeine do
       false
     end
 
+    @doc """
+    A stream of at least one element
+    """
     def construct(x, y) when is_function(y, 0) do
       pair(x, y)
     end
 
     @doc """
-    Extracts _n_ consecutive elements from the stream
-
-    A list of less than _n_ elements out if it reaches the sentinel.
+    A list of consecutive elements of the stream
     """
     @spec take(t, integer) :: list
     def take([], _) do
@@ -67,9 +71,7 @@ defmodule Caffeine do
     end
 
     @doc """
-    A simple map
-
-    The output stream is the input stream w/ the function _f_ applied to each of the elements.
+    An element-wise transformation
     """
     @spec map(t, (term -> term)) :: t
     def map(s, f) do
@@ -87,24 +89,19 @@ defmodule Caffeine do
     end
 
     @doc """
-    The first element, if any, of the stream
+    The head, if any, of the stream
     """
     @spec head(t) :: term
-    def head(x) do
-      hd(x)
+    def head([h | t]) when is_function(t, 0) do
+      h
     end
 
     @doc """
-    The stream, if any, succeeding the first element
+    The tail, if any, of the stream
     """
     @spec tail(t) :: t
-    def tail(x) do
-      release(tl(x))
-    end
-
-    @spec release((() -> t)) :: t
-    defp release(x) do
-      x.()
+    def tail([_ | t]) when is_function(t, 0) do
+      t.()
     end
 
     defp pair(h, r) do
