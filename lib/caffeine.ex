@@ -44,16 +44,8 @@ defmodule Caffeine do
       false
     end
 
-    @doc """
-    A stream whose head is the element _e_ and whose tail _s_ is the expression to generate successive elements
-
-    **Warning:** don't evaluate the expression _s_ before passing it to construct/2 otherwise it's no longer lazy.
-    """
-    @spec construct(term, Macro.t()) :: t
-    defmacro construct(e, s) do
-      quote do
-        [unquote(e) | fn -> unquote(s) end]
-      end
+    def construct(x, y) when is_function(y, 0) do
+      pair(x, y)
     end
 
     @doc """
@@ -86,7 +78,11 @@ defmodule Caffeine do
           Caffeine.Stream.sentinel()
 
         Caffeine.Stream.construct?(s) ->
-          construct(f.(head(s)), map(tail(s), f))
+          g = fn ->
+            map(tail(s), f)
+          end
+
+          construct(f.(head(s)), g)
       end
     end
 
@@ -109,6 +105,10 @@ defmodule Caffeine do
     @spec release((() -> t)) :: t
     defp release(x) do
       x.()
+    end
+
+    defp pair(h, r) do
+      [h | r]
     end
   end
 end

@@ -1,23 +1,16 @@
 defmodule Caffeine.StreamTest do
   use ExUnit.Case
   use ExUnitProperties
-  doctest Caffeine.Stream
-
-  test "expression inside construct/2 builds good stream" do
-    x = CaffeineTest.Ancillary.Natural.lazy()
-    assert Caffeine.Stream.head(x) === 0
-  end
-
-  test "expression outside construct/2 builds bad stream" do
-    t = Task.async(&CaffeineTest.Ancillary.Natural.eager/0)
-    assert Task.shutdown(t, 5000) == nil
-  end
 
   property "sentinel?/1 true if sentinel/0 false if construct/2" do
     assert Caffeine.Stream.sentinel?(Caffeine.Stream.sentinel()) == true
 
     check all e <- term() do
-      x = Caffeine.Stream.construct(e, Caffeine.Stream.sentinel())
+      f = fn ->
+        Caffeine.Stream.sentinel()
+      end
+
+      x = Caffeine.Stream.construct(e, f)
       assert Caffeine.Stream.sentinel?(x) == false
     end
 
@@ -32,8 +25,12 @@ defmodule Caffeine.StreamTest do
     ## given
     check all e <- term(),
               l <- list_of(term()) do
+      f = fn ->
+        CaffeineTest.Ancillary.List.stream(l)
+      end
+
       ## when
-      s = Caffeine.Stream.construct(e, CaffeineTest.Ancillary.List.stream(l))
+      s = Caffeine.Stream.construct(e, f)
       ## then
       assert Caffeine.Stream.head(s) == e
     end
@@ -43,10 +40,14 @@ defmodule Caffeine.StreamTest do
     ## given
     check all e <- term(),
               l <- list_of(term()) do
+      f = fn ->
+        CaffeineTest.Ancillary.List.stream(l)
+      end
+
       ## when
-      s = Caffeine.Stream.construct(e, CaffeineTest.Ancillary.List.stream(l))
+      s = Caffeine.Stream.construct(e, f)
       ## then
-      assert Caffeine.Stream.tail(s) == CaffeineTest.Ancillary.List.stream(l)
+      assert Caffeine.Stream.tail(s) == f.()
     end
   end
 

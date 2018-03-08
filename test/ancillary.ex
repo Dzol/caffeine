@@ -5,17 +5,12 @@ defmodule CaffeineTest.Ancillary.Natural do
     lazy(0)
   end
 
-  def eager do
-    eager(0)
-  end
-
   defp lazy(n) do
-    Caffeine.Stream.construct(n, lazy(increment(n)))
-  end
+    f = fn ->
+      lazy(increment(n))
+    end
 
-  defp eager(n) do
-    i = eager(increment(n))
-    Caffeine.Stream.construct(n, i)
+    Caffeine.Stream.construct(n, f)
   end
 
   defp increment(n) do
@@ -31,6 +26,10 @@ defmodule CaffeineTest.Ancillary.List do
   end
 
   def stream(l) when is_list(l) do
-    Caffeine.Stream.construct(hd(l), stream(tl(l)))
+    f = fn ->
+      stream(tl(l))
+    end
+
+    Caffeine.Stream.construct(hd(l), f)
   end
 end
