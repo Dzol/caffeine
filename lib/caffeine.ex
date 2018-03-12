@@ -8,19 +8,34 @@ defmodule Caffeine do
   """
 
   defmodule Element do
-    @moduledoc """
-    Dialyzer declaration for an element
-    """
-
-    @typedoc """
-    An element
-    """
     @type t :: term
   end
 
   defmodule Stream do
     @moduledoc """
     Primitives and HOFs
+
+    ## Examples
+
+        iex> defmodule Fibonacci do
+        ...>   import Caffeine.Stream, only: [construct: 2]
+        ...> 
+        ...>   def stream do
+        ...>     stream(0, 1)
+        ...>   end
+        ...> 
+        ...>   defp stream(a, b) do
+        ...>     rest = fn -> stream(b, a + b) end
+        ...>     construct(a, rest)
+        ...>   end
+        ...> end
+        iex> require Integer
+        iex> Fibonacci.stream()
+        ...> |> Caffeine.Stream.filter(&Integer.is_even/1)
+        ...> |> Caffeine.Stream.map(&Integer.to_string/1)
+        ...> |> Caffeine.Stream.take(10)
+        ["0", "2", "8", "34", "144", "610", "2584", "10946", "46368", "196418"]
+
     """
 
     @typedoc """
@@ -218,6 +233,8 @@ defmodule Caffeine do
     @doc """
     The head, if any, of the stream _s_
 
+    The following always holds true `head(construct(X, Y)) == X`.
+
     ## Examples
 
         iex> import Caffeine.Stream, only: [head: 1, sentinel: 0, construct: 2]
@@ -238,6 +255,8 @@ defmodule Caffeine do
 
     @doc """
     The tail, if any, of the stream _s_
+
+    The following always holds true `tail(construct(X, Y)) == Y.()`.
 
     ## Examples
 
