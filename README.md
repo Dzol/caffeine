@@ -8,4 +8,4 @@
 
 # Caffeine
 
-A stream library for Elixir with an emphasis on simplicity.
+An alternative stream library
