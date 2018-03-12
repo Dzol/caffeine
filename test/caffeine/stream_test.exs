@@ -1,6 +1,7 @@
 defmodule Caffeine.StreamTest do
   use ExUnit.Case
   use ExUnitProperties
+  doctest Caffeine.Stream
 
   property "sentinel?/1 true if sentinel/0 false if construct/2" do
     assert Caffeine.Stream.sentinel?(Caffeine.Stream.sentinel()) == true

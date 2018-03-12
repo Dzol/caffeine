@@ -38,7 +38,7 @@ defmodule Caffeine.MixProject do
   defp elixirc_paths(_), do: ["lib"]
 
   defp documentation do
-    [main: "Caffeine"]
+    [main: "Caffeine.Stream"]
   end
 
   defp aliases do

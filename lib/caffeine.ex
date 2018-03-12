@@ -3,6 +3,8 @@ defmodule Caffeine do
   ![Coffee Bean Boundary](./coffee.jpeg)
 
   An alternative stream library
+
+  Find the API under `Caffeine.Stream`.
   """
 
   defmodule Element do
@@ -39,9 +41,20 @@ defmodule Caffeine do
 
     @doc """
     Predicate: is _s_ the sentinel?
+
+    ## Examples
+
+        iex> import Caffeine.Stream, only: [sentinel?: 1, sentinel: 0, construct: 2]
+        Caffeine.Stream
+        iex> sentinel?(sentinel())
+        true
+        iex> sentinel?(construct("Elixir", fn -> sentinel() end))
+        false
+
     """
     @spec sentinel?(t) :: boolean
     def sentinel?(s)
+
     def sentinel?([]) do
       true
     end
@@ -52,9 +65,20 @@ defmodule Caffeine do
 
     @doc """
     Predicate: is _s_ a stream of at least one element?
+
+    ## Examples
+
+        iex> import Caffeine.Stream, only: [construct?: 1, sentinel: 0, construct: 2]
+        Caffeine.Stream
+        iex> construct?(construct("Elixir", fn -> sentinel() end))
+        true
+        iex> construct?(sentinel())
+        false
+
     """
     @spec construct?(t) :: boolean
     def construct?(s)
+
     def construct?([_ | x]) when is_function(x, 0) do
       true
     end
@@ -73,6 +97,28 @@ defmodule Caffeine do
 
     @doc """
     A list of _n_ consecutive elements from the stream _s_
+
+    ## Examples
+
+        iex> defmodule Natural do
+        ...>   import Caffeine.Stream, only: [construct: 2]
+        ...> 
+        ...>   def stream do
+        ...>     stream(0)
+        ...>   end
+        ...> 
+        ...>   defp stream(n) do
+        ...>     rest = fn -> stream(increment(n)) end
+        ...>     construct(n, rest)
+        ...>   end
+        ...> 
+        ...>   defp increment(n) do
+        ...>     n + 1
+        ...>   end
+        ...> end
+        iex> Caffeine.Stream.take(Natural.stream(), 5)
+        [0,1,2,3,4]
+
     """
     @spec take(t, integer) :: list
     def take([], _) do
@@ -89,6 +135,30 @@ defmodule Caffeine do
 
     @doc """
     Like the stream _s_ with the function _f_ applied to each element
+
+    ## Examples
+
+        iex> defmodule Natural do
+        ...>   import Caffeine.Stream, only: [construct: 2]
+        ...> 
+        ...>   def stream do
+        ...>     stream(0)
+        ...>   end
+        ...> 
+        ...>   defp stream(n) do
+        ...>     rest = fn -> stream(increment(n)) end
+        ...>     construct(n, rest)
+        ...>   end
+        ...> 
+        ...>   defp increment(n) do
+        ...>     n + 1
+        ...>   end
+        ...> end
+        iex> Natural.stream()
+        ...> |> Caffeine.Stream.map(&Integer.to_string/1)
+        ...> |> Caffeine.Stream.take(5)
+        ["0","1","2","3","4"]
+
     """
     @spec map(t, (Element.t() -> Element.t())) :: t
     def map(s, f) do
@@ -106,6 +176,31 @@ defmodule Caffeine do
 
     @doc """
     A stream whose elements prescribe to the predicate _p_
+
+    ## Examples
+
+        iex> defmodule Natural do
+        ...>   import Caffeine.Stream, only: [construct: 2]
+        ...> 
+        ...>   def stream do
+        ...>     stream(0)
+        ...>   end
+        ...> 
+        ...>   defp stream(n) do
+        ...>     rest = fn -> stream(increment(n)) end
+        ...>     construct(n, rest)
+        ...>   end
+        ...> 
+        ...>   defp increment(n) do
+        ...>     n + 1
+        ...>   end
+        ...> end
+        iex> require Integer
+        iex> Natural.stream()
+        ...> |> Caffeine.Stream.filter(&Integer.is_even/1)
+        ...> |> Caffeine.Stream.take(5)
+        [0,2,4,6,8]
+
     """
     @spec filter(t, (Element.t() -> boolean)) :: t
     def filter(s, p) do
@@ -122,18 +217,42 @@ defmodule Caffeine do
 
     @doc """
     The head, if any, of the stream _s_
+
+    ## Examples
+
+        iex> import Caffeine.Stream, only: [head: 1, sentinel: 0, construct: 2]
+        Caffeine.Stream
+        iex> h = "Elixir"
+        iex> t = fn -> sentinel() end
+        iex> s = construct(h, t)
+        iex> head(s) == h
+        true
+
     """
     @spec head(t) :: Element.t()
     def head(s)
+
     def head([h | t]) when is_function(t, 0) do
       h
     end
 
     @doc """
     The tail, if any, of the stream _s_
+
+    ## Examples
+
+        iex> import Caffeine.Stream, only: [tail: 1, sentinel: 0, construct: 2]
+        Caffeine.Stream
+        iex> h = "Elixir"
+        iex> t = fn -> sentinel() end
+        iex> s = construct(h, t)
+        iex> tail(s) == sentinel()
+        true
+
     """
     @spec tail(t) :: t
     def tail(s)
+
     def tail([_ | t]) when is_function(t, 0) do
       t.()
     end
