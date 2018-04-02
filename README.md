@@ -9,3 +9,7 @@
 # Caffeine
 
 An alternative stream library
+
+# Documentation
+
+https://hexdocs.pm/caffeine/Caffeine.Stream.html
