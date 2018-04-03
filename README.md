@@ -10,6 +10,4 @@
 
 An alternative stream library
 
-# Documentation
-
-https://hexdocs.pm/caffeine/Caffeine.Stream.html
+## [Documentation](https://hexdocs.pm/caffeine/Caffeine.Stream.html)
