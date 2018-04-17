@@ -11,6 +11,7 @@ defmodule CaffeineTest do
              map: 2,
              sentinel: 0,
              sentinel?: 1,
+             skip: 2,
              tail: 1,
              take: 2
            ]

@@ -96,6 +96,19 @@ defmodule Caffeine.StreamTest do
     end
   end
 
+  property "skip/2 cardinality is less than or equal to input" do
+    ## given
+    check all l <- list_of(integer()),
+                   i <- integer(),
+                   i >= 0 do
+      s = CaffeineTest.Ancillary.List.stream(l)
+      ## when
+      t = Caffeine.Stream.skip(s, i)
+      ## then
+      assert length(listify(t)) <= length(l)
+    end
+  end
+
   defp identity(x) do
     x
   end
