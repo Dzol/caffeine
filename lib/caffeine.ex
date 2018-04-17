@@ -276,6 +276,47 @@ defmodule Caffeine do
       t.()
     end
 
+    @doc """
+    Given a stream skips n consecutive elements of it 
+
+    ## Examples
+
+        iex> defmodule Natural do
+        ...>   import Caffeine.Stream, only: [construct: 2]
+        ...> 
+        ...>   def stream do
+        ...>     stream(0)
+        ...>   end
+        ...> 
+        ...>   defp stream(n) do
+        ...>     rest = fn -> stream(increment(n)) end
+        ...>     construct(n, rest)
+        ...>   end
+        ...> 
+        ...>   defp increment(n) do
+        ...>     n + 1
+        ...>   end
+        ...> end
+        iex> Natural.stream()
+        ...> |> Caffeine.Stream.skip(5)
+        ...> |> Caffeine.Stream.take(5)
+        [5, 6, 7, 8, 9]
+
+    """
+    @spec skip(t, integer) :: t
+    def skip(s, 0) do
+      s
+    end
+    def skip(s, n) when is_integer(n) and n > 0 do
+      cond do
+        sentinel?(s) ->
+          sentinel()
+
+        construct?(s) ->
+          skip(tail(s), n - 1)
+      end
+    end
+    
     defp pair(h, r) do
       [h | r]
     end
