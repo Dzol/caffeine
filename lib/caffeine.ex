@@ -307,6 +307,7 @@ defmodule Caffeine do
     def skip(s, 0) do
       s
     end
+
     def skip(s, n) when is_integer(n) and n > 0 do
       cond do
         sentinel?(s) ->
