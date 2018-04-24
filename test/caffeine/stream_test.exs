@@ -99,8 +99,7 @@ defmodule Caffeine.StreamTest do
   property "skip/2 cardinality is less than or equal to input" do
     ## given
     check all l <- list_of(integer()),
-              i <- integer(),
-              i >= 0 do
+              i <- natural() do
       s = CaffeineTest.Ancillary.List.stream(l)
       ## when
       t = Caffeine.Stream.skip(s, i)
@@ -112,8 +111,7 @@ defmodule Caffeine.StreamTest do
   property "after skip/2 the same elements reside in the rest of the stream" do
     ## given
     check all l <- list_of(integer()),
-              i <- integer(),
-              i >= 0 do
+              i <- natural() do
       s = CaffeineTest.Ancillary.List.stream(l)
       ## when
       t1 = Caffeine.Stream.skip(s, i)
@@ -145,5 +143,9 @@ defmodule Caffeine.StreamTest do
       construct?(s) ->
         [head(s) | listify(tail(s))]
     end
+  end
+
+  defp natural do
+    one_of([constant(0), positive_integer()])
   end
 end
