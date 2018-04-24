@@ -12,4 +12,5 @@ jobs:
       - run: env MIX_ENV=test mix compile
       - run: mix test
       - run: env MIX_ENV=test mix coveralls.circle
+      - run: mix format --check-formatted
       # - run: mix dialyzer

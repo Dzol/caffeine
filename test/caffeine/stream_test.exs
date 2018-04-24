@@ -119,7 +119,7 @@ defmodule Caffeine.StreamTest do
       t1 = Caffeine.Stream.skip(s, i)
       t2 = Enum.drop(l, i)
       ## then
-      assert length(listify(t1)) == length(t2)
+      assert listify(t1) === t2
     end
   end
 
