@@ -318,6 +318,42 @@ defmodule Caffeine do
       end
     end
 
+    @doc """
+    Given a stream and a positive n number returns a tuple with a list of n
+    consecutive elements of the given stream and a stream with n elements skipped.
+
+    ## Examples
+
+        iex> defmodule Natural do
+        ...>   import Caffeine.Stream, only: [construct: 2]
+        ...> 
+        ...>   def stream do
+        ...>     stream(0)
+        ...>   end
+        ...> 
+        ...>   defp stream(n) do
+        ...>     rest = fn -> stream(increment(n)) end
+        ...>     construct(n, rest)
+        ...>   end
+        ...> 
+        ...>   defp increment(n) do
+        ...>     n + 1
+        ...>   end
+        ...> end
+        iex> Natural.stream()
+        ...> |> Caffeine.Stream.split(5)
+        {[0, 1, 2, 3, 4], [5 | #Function<0.55865233/0 in Natural.stream/1>]}
+
+    """
+    @spec split(t, integer) :: {list, t}
+    def split(s, 0) do
+      {[], s}
+    end
+
+    def split(s, n) when is_integer(n) and n > 0 do
+      {take(s, n), skip(s, n)}
+    end
+
     defp pair(h, r) do
       [h | r]
     end

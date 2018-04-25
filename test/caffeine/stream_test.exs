@@ -1,7 +1,7 @@
 defmodule Caffeine.StreamTest do
   use ExUnit.Case
   use ExUnitProperties
-  doctest Caffeine.Stream
+  doctest Caffeine.Stream, except: [split: 2]
 
   property "sentinel?/1 true if sentinel/0 false if construct/2" do
     assert Caffeine.Stream.sentinel?(Caffeine.Stream.sentinel()) == true
@@ -118,6 +118,18 @@ defmodule Caffeine.StreamTest do
       t2 = Enum.drop(l, i)
       ## then
       assert listify(t1) === t2
+    end
+  end
+
+  property "split/2 always returns tuples" do
+    ## given
+    check all l <- list_of(integer()),
+              i <- natural() do
+      s = CaffeineTest.Ancillary.List.stream(l)
+      ## when
+      t = Caffeine.Stream.split(s, i)
+      ## then
+      assert is_tuple(t)
     end
   end
 
