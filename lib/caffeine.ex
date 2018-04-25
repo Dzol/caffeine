@@ -317,7 +317,7 @@ defmodule Caffeine do
           skip(tail(s), n - 1)
       end
     end
-    
+
     defp pair(h, r) do
       [h | r]
     end
