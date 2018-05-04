@@ -13,4 +13,6 @@ jobs:
       - run: mix test
       - run: env MIX_ENV=test mix coveralls.circle
       - run: mix format --check-formatted
+      - run: env MIX_ENV=test mix do compile --warnings-as-errors, coveralls.json
+      - run: bash <(curl -s https://codecov.io/bash)
       # - run: mix dialyzer
